@@ -1,0 +1,30 @@
+HEADERS = mat4.h quat.h vec.h
+OBJS =
+PREFIX = @prefix@
+PROGRAM = @PACKAGE_NAME@
+LIBRARY = lib@PACKAGE_NAME@.so
+CXX = @CXX@
+CXXFLAGS = @CXXFLAGS@ @DEPS_CFLAGS@
+LDFLAGS = @LDFLAGS@ @DEPS_LIBS@
+INSTALL = install
+
+.PHONY: all clean check install complete
+
+all:
+
+complete:
+	@echo -n "$(CXX) -cc1 -fsyntax-only $(CXXFLAGS) -code-completion-at "
+
+clean:
+	rm -f $(OBJS) $(OUTPUT)
+
+check:
+	scan-build -o check make
+
+install:
+	$(INSTALL) -d $(PREFIX)/include/@PACKAGE_NAME@
+	$(INSTALL) -m 444 -t $(PREFIX)/include/@PACKAGE_NAME@ $(HEADERS)
+	$(INSTALL) -m 444 -D ../@PACKAGE_NAME@.pc $(PREFIX)/lib/pkgconfig/@PACKAGE_NAME@.pc
+
+%.o: %.cpp %.h
+	$(CXX) $(CXXFLAGS) -c $< -o $@
