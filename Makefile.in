@@ -1,0 +1,12 @@
+.PHONY: all clean install
+
+all:
+	$(MAKE) -C src
+	$(MAKE) -C test
+
+clean:
+	$(MAKE) clean -C src
+	$(MAKE) clean -C test
+
+install:
+	$(MAKE) install -C src
