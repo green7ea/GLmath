@@ -105,7 +105,7 @@ public:
     {
         for (uint8_t i = 0; i < Size; ++i)
         {
-            (*this)[i] += vec[i];
+            (*this)[i] -= vec[i];
         }
     }
 
