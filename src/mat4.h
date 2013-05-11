@@ -15,10 +15,12 @@ public:
     mat4_t()
         : data(new Type[16])
     {
-        data = {1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0,
-                0, 0, 0, 1};
+        for (int i = 0; i < 16; ++i)
+        {
+            (i == 0 || i == 5 || i == 10 || i == 15) ?
+                data[i] = 1:
+                data[i] = 0;
+        }
     }
 
     mat4_t(const Type *n)
