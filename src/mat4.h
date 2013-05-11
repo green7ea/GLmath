@@ -15,13 +15,10 @@ public:
     mat4_t()
         : data(new Type[16])
     {
-        for (int i = 0; i < 16; ++i)
-        {
-            i == 0 ||
-                i == 5 ||
-                i == 10 ||
-                i == 15 ? data[i] = 1 : data[i] = 0;
-        }
+        data = {1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1};
     }
 
     mat4_t(const Type *n)
@@ -66,25 +63,28 @@ public:
            const vec4 &base_z)
         : data(new Type[16])
     {
-        this->data[0] = base_x.x();
-        this->data[4] = base_x.y();
-        this->data[8] = base_x.z();
-        this->data[12] = 0.f;
+        this->data = {base_x.x(), base_x.y(), base_x.z(), 0.f,
+                      base_y.x(), base_y.y(), base_y.z(), 0.f,
+                      base_z.x(), base_z.y(), base_z.z(), 0.f,
+                      0.f, 0.f, 0.f, 1.f};
+    }
 
-        this->data[1] = base_y.x();
-        this->data[5] = base_y.y();
-        this->data[9] = base_y.z();
-        this->data[13] = 0.f;
+    mat4_t(const vec_t<Type, 3> &axis, Type angle)
+        : data(new Type[16])
+    {
+        // http://www.euclideanspace.com/maths/geometry/rotations/conversions/angleToMatrix/
+        const Type c = cos(angle);
+        const Type s = sin(angle);
+        const Type t = 1 - c;
+        const vec_t<Type, 3> na = axis / length(axis);
+        const Type x = na.x();
+        const Type y = na.y();
+        const Type z = na.z();
 
-        this->data[2] = base_z.x();
-        this->data[6] = base_z.y();
-        this->data[10] = base_z.z();
-        this->data[14] = 0.f;
-
-        this->data[3] = 0.f;
-        this->data[7] = 0.f;
-        this->data[11] = 0.f;
-        this->data[15] = 1.f;
+        this->data = {t * x * x + c, t * x * y - z * s, t * x * z + y * s, 0,
+                      t * x * y + z * s, t * y * y + c, t * y * z - x * s, 0,
+                      t * x * z - y * s, t * y * z + x * s, t * z * z + c, 0,
+                      0, 0, 0, 1};
     }
 
     ~mat4_t()
@@ -184,30 +184,13 @@ public:
         return mat4_t<Type>(dst);
     }
 
-    std::string
-    format() const
-    {
-        char output[128];
-        snprintf(output, 512, "\n"
-                 "[ %.2f %.2f %.2f %.2f ]\n"
-                 "[ %.2f %.2f %.2f %.2f ]\n"
-                 "[ %.2f %.2f %.2f %.2f ]\n"
-                 "[ %.2f %.2f %.2f %.2f ]\n",
-                 data[0], data[4], data[8], data[12],
-                 data[1], data[5], data[9], data[13],
-                 data[2], data[6], data[10], data[14],
-                 data[3], data[7], data[11], data[15]);
-
-        return std::string(output);
-    }
-
     mat4_t<Type>
     transpose() const
     {
-        return mat4_t<Type>({ this->data[0], this->data[4], this->data[8], this->data[12],
-                    this->data[1], this->data[5], this->data[9], this->data[13],
-                    this->data[2], this->data[6], this->data[10], this->data[14],
-                    this->data[3], this->data[7], this->data[11], this->data[15] });
+        return mat4_t<Type>({ data[0], data[4], data[8], data[12],
+                    data[1], data[5], data[9], data[13],
+                    data[2], data[6], data[10], data[14],
+                    data[3], data[7], data[11], data[15] });
     }
 
     mat4_t<Type>
@@ -236,7 +219,8 @@ public:
         return mat4_t<Type>(data);
     }
 
-    vec_t<Type, 4> operator*(const vec_t<Type, 4> &vec) const
+    vec_t<Type, 4>
+    operator*(const vec_t<Type, 4> &vec) const
     {
         return vec4(data[0] * vec.x() + data[4] * vec.y() + data[8] * vec.z() +
                     data[12] * vec.w(),
@@ -248,7 +232,8 @@ public:
                     data[15] * vec.w());
     }
 
-    mat4_t<Type> operator*(const mat4_t<Type> &n) const
+    mat4_t<Type>
+    operator*(const mat4_t<Type> &n) const
     {
         mat4_t<Type> res;
         Type *row, *column;
@@ -267,20 +252,23 @@ public:
         return res;
     }
 
-    mat4_t<Type> & operator=(const mat4_t<Type> &n)
+    mat4_t<Type> &
+    operator=(const mat4_t<Type> &n)
     {
         memcpy(data, n.data, 16 * sizeof(Type));
         return *this;
     }
 
-    mat4_t<Type> & operator=(mat4_t<Type> &&n)
+    mat4_t<Type> &
+    operator=(mat4_t<Type> &&n)
     {
         this->data = n.data;
         n.data = NULL;
         return *this;
     }
 
-    bool operator==(const mat4_t<Type> &mat) const
+    bool
+    operator==(const mat4_t<Type> &mat) const
     {
         for (unsigned int i = 0; i < 16; ++i) {
             if (this->data[i] != mat.data[i])
@@ -290,7 +278,8 @@ public:
         return true;
     }
 
-    Type & operator[](unsigned int index)
+    Type &
+    operator[](unsigned int index)
     {
         return data[index];
     }
@@ -301,12 +290,31 @@ public:
         return vec3(data[12], data[13], data[14]);
     }
 
-    static mat4_t<Type> identity()
+    std::string
+    format() const
+    {
+        char output[128];
+        snprintf(output, 512, "\n"
+                 "[ %.2f %.2f %.2f %.2f ]\n"
+                 "[ %.2f %.2f %.2f %.2f ]\n"
+                 "[ %.2f %.2f %.2f %.2f ]\n"
+                 "[ %.2f %.2f %.2f %.2f ]\n",
+                 data[0], data[4], data[8], data[12],
+                 data[1], data[5], data[9], data[13],
+                 data[2], data[6], data[10], data[14],
+                 data[3], data[7], data[11], data[15]);
+
+        return std::string(output);
+    }
+
+    static mat4_t<Type>
+    identity()
     {
         return mat4_t<Type>();
     }
 
-    static mat4_t<Type> rotation(Type angle, Type x, Type y, Type z)
+    static mat4_t<Type>
+    rotation(Type angle, Type x, Type y, Type z)
     {
         const Type s = sin(angle);
         const Type c = cos(angle);
@@ -321,7 +329,8 @@ public:
               0, 0, 0, 1});
     }
 
-    static mat4_t<Type> translation(Type x, Type y, Type z)
+    static mat4_t<Type>
+    translation(Type x, Type y, Type z)
     {
         return mat4_t<Type>(
             { 1.f, 0.f, 0.f, 0.f,
@@ -330,7 +339,8 @@ public:
               x, y, z, 1.f });
     }
 
-    static mat4_t<Type> scale(Type x, Type y, Type z)
+    static mat4_t<Type>
+    scale(Type x, Type y, Type z)
     {
         return mat4_t<Type>(
             { x, 0.f, 0.f, 0.f,
@@ -339,18 +349,20 @@ public:
               0.f, 0.f, 0.f, 1.f });
     }
 
-    static mat4_t<Type> perspective(Type left, Type right,
-                              Type top, Type bottom,
-                              Type near, Type far)
+    static mat4_t<Type>
+    perspective(Type left, Type right,
+                Type top, Type bottom,
+                Type near, Type far)
     {
         // TODO
         assert(false);
         return mat4_t<Type>();
     }
 
-    static mat4_t<Type> ortho(Type left, Type right,
-                        Type top, Type bottom,
-                        Type near, Type far)
+    static mat4_t<Type>
+    ortho(Type left, Type right,
+          Type top, Type bottom,
+          Type near, Type far)
     {
         // TODO
         assert(false);
