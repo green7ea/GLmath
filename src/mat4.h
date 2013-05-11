@@ -96,7 +96,7 @@ public:
         }
     }
 
-    mat4_t<Type>
+    inline mat4_t<Type>
     inverse() const
     {
         const Type *mat = this->data;
@@ -184,7 +184,7 @@ public:
         return mat4_t<Type>(dst);
     }
 
-    mat4_t<Type>
+    inline mat4_t<Type>
     transpose() const
     {
         return mat4_t<Type>({ data[0], data[4], data[8], data[12],
@@ -193,7 +193,7 @@ public:
                     data[3], data[7], data[11], data[15] });
     }
 
-    mat4_t<Type>
+    inline mat4_t<Type>
     operator+(const mat4_t<Type> &mat) const
     {
         Type data[16];
@@ -206,7 +206,7 @@ public:
         return mat4_t<Type>(data);
     }
 
-    mat4_t<Type>
+    inline mat4_t<Type>
     operator-(const mat4_t<Type> &mat) const
     {
         Type data[16];
@@ -219,7 +219,7 @@ public:
         return mat4_t<Type>(data);
     }
 
-    vec_t<Type, 4>
+    inline vec_t<Type, 4>
     operator*(const vec_t<Type, 4> &vec) const
     {
         return vec4(data[0] * vec.x() + data[4] * vec.y() + data[8] * vec.z() +
@@ -232,7 +232,7 @@ public:
                     data[15] * vec.w());
     }
 
-    mat4_t<Type>
+    inline mat4_t<Type>
     operator*(const mat4_t<Type> &n) const
     {
         mat4_t<Type> res;
@@ -252,14 +252,14 @@ public:
         return res;
     }
 
-    mat4_t<Type> &
+    inline mat4_t<Type> &
     operator=(const mat4_t<Type> &n)
     {
         memcpy(data, n.data, 16 * sizeof(Type));
         return *this;
     }
 
-    mat4_t<Type> &
+    inline mat4_t<Type> &
     operator=(mat4_t<Type> &&n)
     {
         this->data = n.data;
@@ -267,7 +267,7 @@ public:
         return *this;
     }
 
-    bool
+    inline bool
     operator==(const mat4_t<Type> &mat) const
     {
         for (unsigned int i = 0; i < 16; ++i) {
@@ -278,7 +278,7 @@ public:
         return true;
     }
 
-    Type &
+    inline Type &
     operator[](unsigned int index)
     {
         return data[index];
@@ -290,7 +290,7 @@ public:
         return vec3(data[12], data[13], data[14]);
     }
 
-    std::string
+    inline std::string
     format() const
     {
         char output[128];
@@ -307,13 +307,13 @@ public:
         return std::string(output);
     }
 
-    static mat4_t<Type>
+    static inline mat4_t<Type>
     identity()
     {
         return mat4_t<Type>();
     }
 
-    static mat4_t<Type>
+    static inline mat4_t<Type>
     rotation(Type angle, Type x, Type y, Type z)
     {
         const Type s = sin(angle);
@@ -329,7 +329,7 @@ public:
               0, 0, 0, 1});
     }
 
-    static mat4_t<Type>
+    static inline mat4_t<Type>
     translation(Type x, Type y, Type z)
     {
         return mat4_t<Type>(
@@ -339,7 +339,7 @@ public:
               x, y, z, 1.f });
     }
 
-    static mat4_t<Type>
+    static inline mat4_t<Type>
     scale(Type x, Type y, Type z)
     {
         return mat4_t<Type>(
@@ -349,7 +349,7 @@ public:
               0.f, 0.f, 0.f, 1.f });
     }
 
-    static mat4_t<Type>
+    static inline mat4_t<Type>
     perspective(Type left, Type right,
                 Type top, Type bottom,
                 Type near, Type far)
@@ -359,7 +359,7 @@ public:
         return mat4_t<Type>();
     }
 
-    static mat4_t<Type>
+    static inline mat4_t<Type>
     ortho(Type left, Type right,
           Type top, Type bottom,
           Type near, Type far)

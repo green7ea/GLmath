@@ -125,7 +125,7 @@ public:
         }
     }
 
-    vec_t<Type, Size>
+    inline vec_t<Type, Size>
     operator/(Type value) const
     {
         const float inv = 1.f / value;
@@ -133,7 +133,7 @@ public:
                      inv * (*this)[2], inv * (*this)[3]);
     }
 
-    void
+    inline void
     operator/=(Type value)
     {
         const float newVal = 1.f / value;
@@ -143,7 +143,7 @@ public:
         }
     }
 
-    vec_t<Type, Size> &
+    inline vec_t<Type, Size> &
     operator=(const vec_t<Type, Size> &vec)
     {
         for (uint8_t i = 0; i < Size; ++i)
@@ -153,134 +153,134 @@ public:
         return *this;
     }
 
-    bool
+    inline bool
     operator==(const vec_t<Type, Size> &vec) const
     {
         return vec[0] == vec[0] && vec[1] == vec[1] &&
             vec[2] == vec[2] && vec[3] == vec[3];
     }
 
-    vec_t<Type, 4>
+    inline vec_t<Type, 4>
     xyzw() const
     {
         return vec_t<Type, 4>((*this)[0], (*this)[1], (*this)[2], (*this)[3]);
     }
 
-    vec_t<Type, 3>
+    inline vec_t<Type, 3>
     xyz() const
     {
         return vec_t<Type, 3>((*this)[0], (*this)[1], (*this)[2]);
     }
 
-    vec_t<Type, 3>
+    inline vec_t<Type, 3>
     xzy() const
     {
         return vec_t<Type, 3>((*this)[0], (*this)[2], (*this)[1]);
     }
 
-    vec_t<Type, 3>
+    inline vec_t<Type, 3>
     yxz() const
     {
         return vec_t<Type, 3>((*this)[1], (*this)[0], (*this)[2]);
     }
 
-    vec_t<Type, 3>
+    inline vec_t<Type, 3>
     yzx() const
     {
         return vec_t<Type, 3>((*this)[1], (*this)[2], (*this)[0]);
     }
 
-    vec_t<Type, 3>
+    inline vec_t<Type, 3>
     zxy() const
     {
         return vec_t<Type, 3>((*this)[2], (*this)[0], (*this)[1]);
     }
 
-    vec_t<Type, 3>
+    inline vec_t<Type, 3>
     zyx() const
     {
         return vec_t<Type, 3>((*this)[2], (*this)[1], (*this)[0]);
     }
 
-    vec_t<Type, 2>
+    inline vec_t<Type, 2>
     xy() const
     {
         return vec_t<Type, 2>((*this)[0], (*this)[1]);
     }
 
-    vec_t<Type, 2>
+    inline vec_t<Type, 2>
     yx() const
     {
         return vec_t<Type, 2>((*this)[1], (*this)[0]);
     }
 
-    vec_t<Type, 2>
+    inline vec_t<Type, 2>
     zx() const
     {
         return vec_t<Type, 2>((*this)[2], (*this)[0]);
     }
 
-    vec_t<Type, 2>
+    inline vec_t<Type, 2>
     zy() const
     {
         return vec_t<Type, 2>((*this)[2], (*this)[1]);
     }
 
-    vec_t<Type, 2>
+    inline vec_t<Type, 2>
     xz() const
     {
         return vec_t<Type, 2>((*this)[0], (*this)[2]);
     }
 
-    vec_t<Type, 2>
+    inline vec_t<Type, 2>
     yz() const
     {
         return vec_t<Type, 2>((*this)[1], (*this)[2]);
     }
 
-    Type &
+    inline Type &
     x()
     {
         return (*this)[0];
     }
 
-    Type &
+    inline Type &
     y()
     {
         return (*this)[1];
     }
 
-    Type &
+    inline Type &
     z()
     {
         return (*this)[2];
     }
 
-    Type &
+    inline Type &
     w()
     {
         return (*this)[3];
     }
 
-    Type
+    inline Type
     x() const
     {
         return (*this)[0];
     }
 
-    Type
+    inline Type
     y() const
     {
         return (*this)[1];
     }
 
-    Type
+    inline Type
     z() const
     {
         return (*this)[2];
     }
 
-    Type
+    inline Type
     w() const
     {
         return (*this)[3];
@@ -291,14 +291,14 @@ private:
 };
 
 template <typename Type, int Size>
-vec_t<Type, Size>
+inline vec_t<Type, Size>
 operator*(Type value, const vec_t<Type, Size> &vec)
 {
     return vec * value;
 }
 
 template <typename Type, int Size>
-float
+inline float
 length(const vec_t<Type, Size> &vec)
 {
     float sum = 0.f;
@@ -310,21 +310,21 @@ length(const vec_t<Type, Size> &vec)
 }
 
 template <typename Type, int Size>
-float
+inline float
 distance(const vec_t<Type, Size> &v1, const vec_t<Type, Size> &v2)
 {
     return length(v2 - v1);
 }
 
 template <typename Type, int Size>
-Type
+inline Type
 dot(const vec_t<Type, Size> &v1, const vec_t<Type, Size> &v2)
 {
     return v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2];
 }
 
 template <typename Type, int Size>
-vec_t<Type, Size>
+inline vec_t<Type, Size>
 cross(const vec_t<Type, Size> &v1, const vec_t<Type, Size> &v2)
 {
     // TODO this is for 2 or 3 vectors not 4
@@ -334,8 +334,8 @@ cross(const vec_t<Type, Size> &v1, const vec_t<Type, Size> &v2)
 }
 
 template <typename Type, int Size>
-vec_t<Type, Size>
-normalize(const vec_t<Type, Size> &vec)
+inline vec_t<Type, Size>
+norm(const vec_t<Type, Size> &vec)
 {
     return vec / length(vec);
 }

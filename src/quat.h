@@ -65,13 +65,13 @@ public:
         }
     }
 
-    Type
+    inline Type
     norm() const
     {
         return sqrt(w * w + x * x + y * y + z * z);
     }
 
-    quat_t<Type> &
+    inline quat_t<Type> &
     normalize()
     {
         const Type norm = this->norm();
@@ -88,21 +88,21 @@ public:
         return *this;
     }
 
-    quat_t<Type>
+    inline quat_t<Type>
     operator+(const quat_t<Type> &quat) const
     {
         return quat_t<Type>(this->w + quat.w, this->x + quat.x,
                             this->y + quat.y, this->z + quat.z);
     }
 
-    quat_t<Type>
+    inline quat_t<Type>
     operator-(const quat_t<Type> &quat) const
     {
         return quat_t<Type>(this->w - quat.w, this->x - quat.x,
                             this->y - quat.y, this->z - quat.z);
     }
 
-    quat_t<Type>
+    inline quat_t<Type>
     operator*(const quat_t<Type> &quat) const
     {
         const float w = this->w;
@@ -120,7 +120,7 @@ public:
                             w * Z + x * Y - y * X + z * W);
     }
 
-    vec_t<Type, 3>
+    inline vec_t<Type, 3>
     operator*(const vec_t<Type, 3> &vec) const
     {
         vec_t<Type, 3> uv, uuv;
@@ -133,7 +133,7 @@ public:
         return vec + uv + uuv;
     }
 
-    quat_t<Type> &
+    inline quat_t<Type> &
     operator=(const quat_t<Type> &quat)
     {
         this->w = quat.w;
@@ -144,7 +144,7 @@ public:
         return *this;
     }
 
-    bool
+    inline bool
     operator==(const quat_t<Type> &quat) const
     {
         return this->w == quat.w && this->x == quat.x &&
@@ -158,7 +158,7 @@ public:
 };
 
 template <typename Type>
-quat_t<Type>
+inline quat_t<Type>
 lerp(const quat_t<Type> &initial, const quat_t<Type> &final,
      float ratio)
 {
@@ -167,7 +167,7 @@ lerp(const quat_t<Type> &initial, const quat_t<Type> &final,
 }
 
 template <typename Type>
-quat_t<Type>
+inline quat_t<Type>
 slerp(const quat_t<Type> &initial, const quat_t<Type> &final,
       float ratio)
 {
