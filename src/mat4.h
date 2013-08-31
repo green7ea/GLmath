@@ -6,6 +6,17 @@
 #include <initializer_list>
 
 #include "vec.h"
+#include "quat.h"
+
+/*
+  These matrices are all column major. The best way to think about
+  them is to see them as an array of column vectors.
+
+  / 0  4  8 12 \
+  | 1  5  9 13 |
+  | 2  6 10 14 |
+  \ 3  7 11 15 /
+ */
 
 template <typename Type>
 class mat4_t
@@ -13,7 +24,6 @@ class mat4_t
 public:
 
     mat4_t()
-        : data(new Type[16])
     {
         for (int i = 0; i < 16; ++i)
         {
@@ -24,13 +34,11 @@ public:
     }
 
     mat4_t(const Type *n)
-        : data(new Type[16])
     {
         memcpy(data, n, 16 * sizeof(Type));
     }
 
     mat4_t(std::initializer_list<Type> values)
-        : data(new Type[16])
     {
         int i = 0;
         for (const Type value: values)
@@ -41,15 +49,16 @@ public:
         }
         for (; i < 16; ++i)
         {
-            i == 0 ||
-                i == 5 ||
-                i == 10 ||
-                i == 15 ? data[i] = 1 : data[i] = 0;
+            (i == 0 ||
+             i == 5 ||
+             i == 10 ||
+             i == 15) ?
+                data[i] = 1 :
+                data[i] = 0;
         }
     }
 
     mat4_t(const mat4_t &n)
-        : data(new Type[16])
     {
         operator=(n);
     }
@@ -60,19 +69,54 @@ public:
         n.data = NULL;
     }
 
-	mat4_t(const vec4 &base_x,
-           const vec4 &base_y,
-           const vec4 &base_z)
-        : data(new Type[16])
+	mat4_t(const vec_t<Type, 3> &base_x,
+           const vec_t<Type, 3> &base_y,
+           const vec_t<Type, 3> &base_z)
     {
-        this->data = {base_x.x(), base_x.y(), base_x.z(), 0.f,
-                      base_y.x(), base_y.y(), base_y.z(), 0.f,
-                      base_z.x(), base_z.y(), base_z.z(), 0.f,
-                      0.f, 0.f, 0.f, 1.f};
+        data[0] = base_x.x();
+        data[1] = base_y.x();
+        data[2] = base_z.x();
+        data[3] = 0.f;
+        data[4] = base_x.y();
+        data[5] = base_y.y();
+        data[6] = base_z.y();
+        data[7] = 0.f;
+        data[8] = base_x.z();
+        data[9] = base_y.z();
+        data[10] = base_z.z();
+        data[11] = 0.f;
+        data[12] = 0.f;
+        data[13] = 0.f;
+        data[14] = 0.f;
+        data[15] = 1.f;
+    }
+
+    mat4_t(const quat_t<Type> &q, const vec_t<Type, 3> &translation)
+    {
+        // Rotation
+        // http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToMatrix/
+        data[0] = 1 - 2 * q.y * q.y - 2 * q.z * q.z;
+        data[1] = 2 * q.x * q.y + 2 * q.z * q.w;
+        data[2] = 2 * q.x * q.z - 2 * q.y * q.w;
+        data[3] = 0;
+        data[4] = 2 * q.x * q.y - 2 * q.z * q.w;
+        data[5] = 1 - 2 * q.x * q.x - 2 * q.z * q.z;
+        data[6] = 2 * q.y * q.z + 2 * q.x * q.w;
+        data[7] = 0;
+        data[8] = 2 * q.x * q.z + 2 * q.y * q.w;
+        data[9] = 2 * q.y * q.z - 2 * q.x * q.w;
+        data[10] = 1 - 2 * q.x * q.x - 2 * q.y * q.y;
+        data[11] = 0;
+
+        // Translation
+        data[12] = translation.x();
+        data[13] = translation.y();
+        data[14] = translation.z();
+        data[15] = 1;
+        
     }
 
     mat4_t(const vec_t<Type, 3> &axis, Type angle)
-        : data(new Type[16])
     {
         // http://www.euclideanspace.com/maths/geometry/rotations/conversions/angleToMatrix/
         const Type c = cos(angle);
@@ -83,10 +127,22 @@ public:
         const Type y = na.y();
         const Type z = na.z();
 
-        this->data = {t * x * x + c, t * x * y - z * s, t * x * z + y * s, 0,
-                      t * x * y + z * s, t * y * y + c, t * y * z - x * s, 0,
-                      t * x * z - y * s, t * y * z + x * s, t * z * z + c, 0,
-                      0, 0, 0, 1};
+        data[0] = t * x * x + c;
+        data[1] = t * x * y + z * s;
+        data[2] = t * x * z - y * s;
+        data[3] = 0;
+        data[4] = t * x * y - z * s;
+        data[5] = t * y * y + c;
+        data[6] = t * y * z + x * s;
+        data[7] = 0;
+        data[8] = t * x * z + y * s;
+        data[9] = t * y * z - x * s;
+        data[10] = t * z * z + c;
+        data[11] = 0;
+        data[12] = 0;
+        data[13] = 0;
+        data[14] = 0;
+        data[15] = 1;
     }
 
     ~mat4_t()
@@ -224,14 +280,22 @@ public:
     inline vec_t<Type, 4>
     operator*(const vec_t<Type, 4> &vec) const
     {
-        return vec4(data[0] * vec.x() + data[4] * vec.y() + data[8] * vec.z() +
-                    data[12] * vec.w(),
-                    data[1] * vec.x() + data[5] * vec.y() + data[9] * vec.z() +
-                    data[13] * vec.w(),
-                    data[2] * vec.x() + data[6] * vec.y() + data[10] * vec.z() +
-                    data[14] * vec.w(),
-                    data[3] * vec.x() + data[7] * vec.y() + data[11] * vec.z() +
-                    data[15] * vec.w());
+        return vec_t<Type, 4>(data[0] * vec.x() + data[4] * vec.y() +
+                              data[8] * vec.z() + data[12] * vec.w(),
+                              data[1] * vec.x() + data[5] * vec.y() +
+                              data[9] * vec.z() + data[13] * vec.w(),
+                              data[2] * vec.x() + data[6] * vec.y() +
+                              data[10] * vec.z() + data[14] * vec.w(),
+                              data[3] * vec.x() + data[7] * vec.y() +
+                              data[11] * vec.z() + data[15] * vec.w());
+    }
+
+    inline vec_t<Type, 3>
+    operator*(const vec_t<Type, 3> &vec) const
+    {
+        return vec_t<Type, 3>(data[0] * vec.x() + data[4] * vec.y() + data[8] * vec.z() + data[12],
+                              data[1] * vec.x() + data[5] * vec.y() + data[9] * vec.z() + data[13],
+                              data[2] * vec.x() + data[6] * vec.y() + data[10] * vec.z() + data[14]);
     }
 
     inline mat4_t<Type>
@@ -292,6 +356,21 @@ public:
         return vec3(data[12], data[13], data[14]);
     }
 
+    inline quat_t<Type>
+    quat() const
+    {
+        const Type w = sqrt(1.f + data[0] +
+                             data[5] + data[10]) / 2.f;
+        const Type div = 1.f / (4.f * w);
+        const Type x = (data[6] - data[9]) * div;
+        const Type y = (data[8] - data[2]) * div;
+        const Type z = (data[1] - data[4]) * div;
+
+        quat_t<Type> quat(w, x, y, z);
+        quat.normalize();
+        return quat;
+    }
+
     inline std::string
     format() const
     {
@@ -332,8 +411,11 @@ public:
     }
 
     static inline mat4_t<Type>
-    translation(Type x, Type y, Type z)
+    translation(const vec_t<Type, 3> &trans)
     {
+        const Type x = trans.x();
+        const Type y = trans.y();
+        const Type z = trans.z();
         return mat4_t<Type>(
             { 1.f, 0.f, 0.f, 0.f,
               0.f, 1.f, 0.f, 0.f,
@@ -371,7 +453,7 @@ public:
         return mat4_t<Type>();
     }
 
-    Type *data;
+    Type *data = new Type[16];
 };
 
 typedef mat4_t<float> mat4;

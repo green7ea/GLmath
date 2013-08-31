@@ -286,6 +286,18 @@ public:
         return (*this)[3];
     }
 
+    inline operator
+    Type *()
+    {
+        return data;
+    }
+
+    inline operator
+    const Type *() const
+    {
+        return data;
+    }
+
 private:
     Type data[Size];
 };

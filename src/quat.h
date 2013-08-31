@@ -2,7 +2,7 @@
 #define __QUATERNION_H__
 
 #include "vec.h"
-#include "mat4.h"
+// #include "mat4.h"
 
 template <typename Type>
 class quat_t
@@ -27,13 +27,26 @@ public:
         normalize();
     }
 
-    quat_t(const mat4_t<Type> &mat)
-        : w(sqrt(1.f + mat.data[0] + mat.data[5] + mat.data[10]) / 2.f)
+    quat_t(const vec3 &vec_a,
+           const vec3 &vec_b)
     {
-        const float div = 1.f / (4.f * w);
-        x = (mat.data[6] - mat.data[9]) * div;
-        y = (mat.data[8] - mat.data[2]) * div;
-        z = (mat.data[1] - mat.data[4]) * div;
+        const vec3 vec1 = norm(vec_a);
+        const vec3 vec2 = norm(vec_b);
+        const float dot_res = dot(vec1, vec2);
+        if (dot_res >= 0.999 ||
+            dot_res <= -0.999) // TODO we should flip the vector by 180
+        {
+            w = 1;
+            x = 0;
+            y = 0;
+            z = 0;
+        }
+
+        const vec3 a = cross(vec1, vec2);
+        x = a.x();
+        y = a.y();
+        z = a.z();
+        w = 1 + dot_res;
         normalize();
     }
 
@@ -66,7 +79,7 @@ public:
     }
 
     inline Type
-    norm() const
+    length() const
     {
         return sqrt(w * w + x * x + y * y + z * z);
     }
@@ -74,7 +87,7 @@ public:
     inline quat_t<Type> &
     normalize()
     {
-        const Type norm = this->norm();
+        const Type norm = this->length();
 
         if (norm > 0)
         {
@@ -147,8 +160,8 @@ public:
     inline bool
     operator==(const quat_t<Type> &quat) const
     {
-        return this->w == quat.w && this->x == quat.x &&
-            this->y == quat.y && this->z == quat.z;
+        return (this->w == quat.w && this->x == quat.x &&
+                this->y == quat.y && this->z == quat.z);
     }
 
     Type w;
