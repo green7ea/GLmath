@@ -9,11 +9,11 @@ class quat_t
 {
 public:
 
-    quat_t(Type w = 1.f, Type x = 0.f, Type y = 0.f, Type z = 0.f)
-        : w(w),
-          x(x),
-          y(y),
-          z(z)
+    quat_t(Type quat_w = 1.f, Type quat_x = 0.f, Type quat_y = 0.f, Type quat_z = 0.f)
+        : w(quat_w),
+          x(quat_x),
+          y(quat_y),
+          z(quat_z)
     {
 
     }
@@ -30,9 +30,9 @@ public:
     quat_t(const vec3 &vec_a,
            const vec3 &vec_b)
     {
-        const vec3 vec1 = norm(vec_a);
-        const vec3 vec2 = norm(vec_b);
-        const float dot_res = dot(vec1, vec2);
+        const vec3 vec_1 = norm(vec_a);
+        const vec3 vec_2 = norm(vec_b);
+        const float dot_res = dot(vec_1, vec_2);
         if (dot_res >= 0.999 ||
             dot_res <= -0.999) // TODO we should flip the vector by 180
         {
@@ -42,7 +42,7 @@ public:
             z = 0;
         }
 
-        const vec3 a = cross(vec1, vec2);
+        const vec3 a = cross(vec_1, vec_2);
         x = a.x();
         y = a.y();
         z = a.z();
@@ -118,19 +118,19 @@ public:
     inline quat_t<Type>
     operator*(const quat_t<Type> &quat) const
     {
-        const float w = this->w;
-        const float x = this->x;
-        const float y = this->y;
-        const float z = this->z;
-        const float W = quat.w;
-        const float X = quat.x;
-        const float Y = quat.y;
-        const float Z = quat.z;
+        const float w_1 = this->w;
+        const float x_1 = this->x;
+        const float y_1 = this->y;
+        const float z_1 = this->z;
+        const float W_1 = quat.w;
+        const float X_1 = quat.x;
+        const float Y_1 = quat.y;
+        const float Z_1 = quat.z;
 
-        return quat_t<Type>(w * W - x * X - y * Y - z * Z,
-                            w * X + x * W + y * Z - z * Y,
-                            w * Y - x * Z + y * W + z * X,
-                            w * Z + x * Y - y * X + z * W);
+        return quat_t<Type>(w_1 * W_1 - x_1 * X_1 - y_1 * Y_1 - z_1 * Z_1,
+                            w_1 * X_1 + x_1 * W_1 + y_1 * Z_1 - z_1 * Y_1,
+                            w_1 * Y_1 - x_1 * Z_1 + y_1 * W_1 + z_1 * X_1,
+                            w_1 * Z_1 + x_1 * Y_1 - y_1 * X_1 + z_1 * W_1);
     }
 
     inline vec_t<Type, 3>
@@ -172,8 +172,7 @@ public:
 
 template <typename Type>
 inline quat_t<Type>
-lerp(const quat_t<Type> &initial, const quat_t<Type> &final,
-     float ratio)
+lerp(const quat_t<Type> &, const quat_t<Type> &, float)
 {
     // TODO complete
     return quat_t<Type>();
@@ -181,8 +180,7 @@ lerp(const quat_t<Type> &initial, const quat_t<Type> &final,
 
 template <typename Type>
 inline quat_t<Type>
-slerp(const quat_t<Type> &initial, const quat_t<Type> &final,
-      float ratio)
+slerp(const quat_t<Type> &, const quat_t<Type> &, float)
 {
     // TODO complete
     return quat_t<Type>();

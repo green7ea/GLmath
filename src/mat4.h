@@ -91,7 +91,7 @@ public:
         data[15] = 1.f;
     }
 
-    mat4_t(const quat_t<Type> &q, const vec_t<Type, 3> &translation)
+    mat4_t(const quat_t<Type> &q, const vec_t<Type, 3> &trans)
     {
         // Rotation
         // http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToMatrix/
@@ -109,9 +109,9 @@ public:
         data[11] = 0;
 
         // Translation
-        data[12] = translation.x();
-        data[13] = translation.y();
-        data[14] = translation.z();
+        data[12] = trans.x();
+        data[13] = trans.y();
+        data[14] = trans.z();
         data[15] = 1;
         
     }
@@ -254,27 +254,27 @@ public:
     inline mat4_t<Type>
     operator+(const mat4_t<Type> &mat) const
     {
-        Type data[16];
+        Type ldata[16];
 
         for (int i = 0; i < 16; ++i)
         {
-            data[i] = this->data[i] + mat.data[i];
+            ldata[i] = this->data[i] + mat.data[i];
         }
 
-        return mat4_t<Type>(data);
+        return mat4_t<Type>(ldata);
     }
 
     inline mat4_t<Type>
     operator-(const mat4_t<Type> &mat) const
     {
-        Type data[16];
+        Type ldata[16];
 
         for (int i = 0; i < 16; ++i)
         {
-            data[i] = this->data[i] - mat.data[i];
+            ldata[i] = this->data[i] - mat.data[i];
         }
 
-        return mat4_t<Type>(data);
+        return mat4_t<Type>(ldata);
     }
 
     inline vec_t<Type, 4>
@@ -357,7 +357,7 @@ public:
     }
 
     inline quat_t<Type>
-    quat() const
+    getQuat() const
     {
         const Type w = sqrt(1.f + data[0] +
                              data[5] + data[10]) / 2.f;
@@ -366,9 +366,9 @@ public:
         const Type y = (data[8] - data[2]) * div;
         const Type z = (data[1] - data[4]) * div;
 
-        quat_t<Type> quat(w, x, y, z);
-        quat.normalize();
-        return quat;
+        quat_t<Type> lquat(w, x, y, z);
+        lquat.normalize();
+        return lquat;
     }
 
     inline std::string
@@ -434,9 +434,9 @@ public:
     }
 
     static inline mat4_t<Type>
-    perspective(Type left, Type right,
-                Type top, Type bottom,
-                Type near, Type far)
+    perspective(Type, Type,
+                Type, Type,
+                Type, Type)
     {
         // TODO
         assert(false);
@@ -444,9 +444,9 @@ public:
     }
 
     static inline mat4_t<Type>
-    ortho(Type left, Type right,
-          Type top, Type bottom,
-          Type near, Type far)
+    ortho(Type, Type,
+          Type, Type,
+          Type, Type)
     {
         // TODO
         assert(false);

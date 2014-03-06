@@ -4,29 +4,31 @@
 #include <cmath>
 #include <cstdint>
 #include <cassert>
+#include <initializer_list>
+#include <type_traits>
 
 template <typename Type, int Size>
 class vec_t
 {
 public:
 
-    vec_t(Type x = 0, Type y = 0, Type z = 0, Type w = 0)
+    vec_t(Type vec_x = 0, Type vec_y = 0, Type vec_z = 0, Type vec_w = 0)
     {
         if (Size >= 1)
         {
-            data[0] = x;
+            data[0] = vec_x;
         }
         if (Size >= 2)
         {
-            data[1] = y;
+            data[1] = vec_y;
         }
         if (Size >= 3)
         {
-            data[2] = z;
+            data[2] = vec_z;
         }
         if (Size == 4)
         {
-            data[3] = w;
+            data[3] = vec_w;
         }
         else if (Size > 4)
         {
@@ -241,48 +243,56 @@ public:
     inline Type &
     x()
     {
+        static_assert(Size >= 1, "Vector is too small");
         return (*this)[0];
     }
 
     inline Type &
     y()
     {
+        static_assert(Size >= 2, "Vector is too small");
         return (*this)[1];
     }
 
     inline Type &
     z()
     {
+        static_assert(Size >= 3, "Vector is too small");
         return (*this)[2];
     }
 
     inline Type &
     w()
     {
+        static_assert(Size >= 4, "Vector is too small");
         return (*this)[3];
     }
 
     inline Type
     x() const
     {
+        static_assert(Size >= 1, "Vector is too small");
         return (*this)[0];
     }
 
     inline Type
     y() const
     {
+        static_assert(Size >= 2, "Vector is too small");
         return (*this)[1];
     }
 
     inline Type
     z() const
     {
+        static_assert(Size >= 3, "Vector is too small");
         return (*this)[2];
     }
 
     inline Type
     w() const
     {
+        static_assert(Size >= 4, "Vector is too small");
         return (*this)[3];
     }
 
@@ -319,6 +329,18 @@ length(const vec_t<Type, Size> &vec)
         sum += (float)(vec[i] * vec[i]);
     }
     return sqrt(sum);
+}
+
+template <typename Type, int Size>
+inline float
+length2(const vec_t<Type, Size> &vec)
+{
+    float sum = 0.f;
+    for (uint8_t i = 0; i < Size; ++i)
+    {
+        sum += (float)(vec[i] * vec[i]);
+    }
+    return sum;
 }
 
 template <typename Type, int Size>
