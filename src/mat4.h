@@ -362,9 +362,9 @@ public:
         const Type w = sqrt(1.f + data[0] +
                              data[5] + data[10]) / 2.f;
         const Type div = 1.f / (4.f * w);
-        const Type x = (data[6] - data[9]) * div;
-        const Type y = (data[8] - data[2]) * div;
-        const Type z = (data[1] - data[4]) * div;
+        const Type x = (data[9] - data[6]) * div;
+        const Type y = (data[2] - data[8]) * div;
+        const Type z = (data[4] - data[1]) * div;
 
         quat_t<Type> lquat(w, x, y, z);
         lquat.normalize();
