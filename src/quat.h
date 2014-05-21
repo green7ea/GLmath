@@ -24,7 +24,7 @@ public:
           y(vec.y() * sin(angle / 2.f)),
           z(vec.z() * sin(angle / 2.f))
     {
-        normalize();
+
     }
 
     quat_t(const vec3 &vec_a,
@@ -47,7 +47,6 @@ public:
         y = a.y();
         z = a.z();
         w = 1 + dot_res;
-        normalize();
     }
 
     quat_t(std::initializer_list<Type> values)
@@ -76,29 +75,6 @@ public:
                 break;
             }
         }
-    }
-
-    inline Type
-    length() const
-    {
-        return sqrt(w * w + x * x + y * y + z * z);
-    }
-
-    inline quat_t<Type> &
-    normalize()
-    {
-        const Type norm = this->length();
-
-        if (norm > 0)
-        {
-            const Type recip = 1 / norm;
-            w *= recip;
-            x *= recip;
-            y *= recip;
-            z *= recip;
-        }
-
-        return *this;
     }
 
     inline quat_t<Type>
@@ -169,6 +145,27 @@ public:
     Type y;
     Type z;
 };
+
+template <typename Type>
+Type length(const quat_t<Type> &quat)
+{
+    return sqrt(quat.w * quat.w + quat.x * quat.x + quat.y * quat.y + quat.z * quat.z);
+}
+
+template <typename Type>
+quat_t<Type> norm(const quat_t<Type> &quat)
+{
+    const Type len = length(quat);
+
+    if (len > 0.f)
+    {
+        return quat_t<Type>(len * quat.w,
+                            len * quat.x,
+                            len * quat.y,
+                            len * quat.z);
+    }
+    return quat_t<Type>(1.f, 0.f, 0.f, 0.f);
+}
 
 template <typename Type>
 inline quat_t<Type>
