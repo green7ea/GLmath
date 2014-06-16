@@ -9,7 +9,7 @@ class quat_t
 {
 public:
 
-    quat_t(Type quat_w = 1.f, Type quat_x = 0.f, Type quat_y = 0.f, Type quat_z = 0.f)
+    quat_t(Type quat_w, Type quat_x, Type quat_y, Type quat_z)
         : w(quat_w),
           x(quat_x),
           y(quat_y),
@@ -25,6 +25,23 @@ public:
           z(vec.z() * sin(angle / 2.f))
     {
 
+    }
+
+    quat_t(Type yaw, Type pitch, Type roll)
+    {
+        const Type cos_phi = cos(roll * 0.5f);
+        const Type sin_phi = sin(roll * 0.5f);
+
+        const Type cos_theta = cos(pitch * 0.5f);
+        const Type sin_theta = sin(pitch * 0.5f);
+
+        const Type cos_psi = cos(yaw * 0.5f);
+        const Type sin_psi = cos(yaw * 0.5f);
+
+        w = cos_phi * cos_theta * sin_psi - sin_phi * sin_theta * cos_psi;
+        x = cos_phi * cos_theta * cos_psi + sin_phi * sin_theta * sin_psi;
+        y = sin_phi * cos_theta * cos_psi - cos_phi * sin_theta * sin_psi;
+        z = cos_phi * sin_theta * cos_psi + sin_phi * cos_theta * sin_psi;
     }
 
     quat_t(const vec3 &vec_a,
