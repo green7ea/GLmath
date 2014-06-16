@@ -4,16 +4,13 @@ PREFIX = @prefix@
 PROGRAM = @PACKAGE_NAME@
 LIBRARY = lib@PACKAGE_NAME@.so
 CXX = @CXX@
-CXXFLAGS = @CXXFLAGS@ @DEPS_CFLAGS@
-LDFLAGS = @LDFLAGS@ @DEPS_LIBS@
+CXXFLAGS = @CXXFLAGS@
+LDFLAGS = @LDFLAGS@
 INSTALL = install
 
-.PHONY: all clean check install complete
+.PHONY: all clean check install
 
 all:
-
-complete:
-	@echo -n "$(CXX) -cc1 -fsyntax-only $(CXXFLAGS) -code-completion-at "
 
 clean:
 	rm -f $(OBJS) $(OUTPUT)
