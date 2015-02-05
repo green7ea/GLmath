@@ -27,9 +27,7 @@ public:
     {
         for (int i = 0; i < 16; ++i)
         {
-            (i == 0 || i == 5 || i == 10 || i == 15) ?
-                data[i] = 1:
-                data[i] = 0;
+            data[i] = (i == 0 || i == 5 || i == 10 || i == 15) ? 1 : 0;
         }
     }
 
@@ -49,24 +47,13 @@ public:
         }
         for (; i < 16; ++i)
         {
-            (i == 0 ||
-             i == 5 ||
-             i == 10 ||
-             i == 15) ?
-                data[i] = 1 :
-                data[i] = 0;
+            data[i] = (i == 0 || i == 5 || i == 10 || i == 15) ? 1 : 0;
         }
     }
 
     mat4_t(const mat4_t &n)
     {
         operator=(n);
-    }
-
-    mat4_t(mat4_t &&n)
-    {
-        this->data = n.data;
-        n.data = NULL;
     }
 
 	mat4_t(const vec_t<Type, 3> &base_x,
@@ -145,17 +132,6 @@ public:
         data[15] = 1;
     }
 
-    ~mat4_t()
-    {
-        if (data)
-        {
-            delete [] data;
-            data = NULL;
-        }
-    }
-
-
-
     inline mat4_t<Type>
     operator+(const mat4_t<Type> &mat) const
     {
@@ -227,14 +203,6 @@ public:
     operator=(const mat4_t<Type> &n)
     {
         memcpy(data, n.data, 16 * sizeof(Type));
-        return *this;
-    }
-
-    inline mat4_t<Type> &
-    operator=(mat4_t<Type> &&n)
-    {
-        this->data = n.data;
-        n.data = NULL;
         return *this;
     }
 
@@ -358,7 +326,7 @@ public:
         return mat4_t<Type>();
     }
 
-    Type *data = new Type[16];
+    Type data[16];
 };
 
 template <typename Type>
