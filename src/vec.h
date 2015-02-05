@@ -8,10 +8,8 @@
 #include <type_traits>
 
 template <typename Type, int Size>
-class vec_t
+struct vec_t
 {
-public:
-
     vec_t(Type vec_x = 0, Type vec_y = 0, Type vec_z = 0, Type vec_w = 0)
     {
         if (Size >= 1)
@@ -51,8 +49,7 @@ public:
         }
     }
 
-    inline Type &
-    operator[](uint8_t index)
+    Type & operator[](uint8_t index)
     {
         if (Size >= (index + 1))
         {
@@ -66,8 +63,7 @@ public:
         }
     }
 
-    inline Type
-    operator[](uint8_t index) const
+    Type operator[](uint8_t index) const
     {
         if (Size >= (index + 1))
         {
@@ -79,15 +75,13 @@ public:
         }
     }
 
-    inline vec_t<Type, Size>
-    operator+(const vec_t<Type, Size> &vec) const
+    vec_t<Type, Size> operator+(const vec_t<Type, Size> &vec) const
     {
         return vec_t<Type, Size>((*this)[0] + vec[0], (*this)[1] + vec[1],
                                  (*this)[2] + vec[2], (*this)[3] + vec[3]);
     }
 
-    inline void
-    operator+=(const vec_t<Type, Size> &vec)
+    void operator+=(const vec_t<Type, Size> &vec)
     {
         for (uint8_t i = 0; i < Size; ++i)
         {
@@ -95,15 +89,13 @@ public:
         }
     }
 
-    inline vec_t<Type, Size>
-    operator-(const vec_t<Type, Size> &vec) const
+    vec_t<Type, Size> operator-(const vec_t<Type, Size> &vec) const
     {
         return vec_t<Type, Size>((*this)[0] - vec[0], (*this)[1] - vec[1],
                                  (*this)[2] - vec[2], (*this)[3] - vec[3]);
     }
 
-    inline void
-    operator-=(const vec_t<Type, Size> &vec)
+    void operator-=(const vec_t<Type, Size> &vec)
     {
         for (uint8_t i = 0; i < Size; ++i)
         {
@@ -111,15 +103,13 @@ public:
         }
     }
 
-    inline vec_t<Type, Size>
-    operator*(Type value) const
+    vec_t<Type, Size> operator*(Type value) const
     {
         return vec_t(value * (*this)[0], value * (*this)[1],
                      value * (*this)[2], value * (*this)[3]);
     }
 
-    inline void
-    operator*=(Type value)
+    void operator*=(Type value)
     {
         for (uint8_t i = 0; i < Size; ++i)
         {
@@ -127,16 +117,14 @@ public:
         }
     }
 
-    inline vec_t<Type, Size>
-    operator/(Type value) const
+    vec_t<Type, Size> operator/(Type value) const
     {
         const float inv = 1.f / value;
         return vec_t(inv * (*this)[0], inv * (*this)[1],
                      inv * (*this)[2], inv * (*this)[3]);
     }
 
-    inline void
-    operator/=(Type value)
+    void operator/=(Type value)
     {
         const float newVal = 1.f / value;
         for (uint8_t i = 0; i < Size; ++i)
@@ -145,8 +133,7 @@ public:
         }
     }
 
-    inline vec_t<Type, Size> &
-    operator=(const vec_t<Type, Size> &vec)
+    vec_t<Type, Size> & operator=(const vec_t<Type, Size> &vec)
     {
         for (uint8_t i = 0; i < Size; ++i)
         {
@@ -155,173 +142,136 @@ public:
         return *this;
     }
 
-    inline bool
-    operator==(const vec_t<Type, Size> &vec) const
+    bool operator==(const vec_t<Type, Size> &vec) const
     {
         return vec[0] == vec[0] && vec[1] == vec[1] &&
             vec[2] == vec[2] && vec[3] == vec[3];
     }
 
-    inline vec_t<Type, 4>
-    xyzw() const
+    vec_t<Type, 4> xyzw() const
     {
         return vec_t<Type, 4>((*this)[0], (*this)[1], (*this)[2], (*this)[3]);
     }
 
-    inline vec_t<Type, 3>
-    xyz() const
+    vec_t<Type, 3> xyz() const
     {
         return vec_t<Type, 3>((*this)[0], (*this)[1], (*this)[2]);
     }
 
-    inline vec_t<Type, 3>
-    xzy() const
+    vec_t<Type, 3> xzy() const
     {
         return vec_t<Type, 3>((*this)[0], (*this)[2], (*this)[1]);
     }
 
-    inline vec_t<Type, 3>
-    yxz() const
+    vec_t<Type, 3> yxz() const
     {
         return vec_t<Type, 3>((*this)[1], (*this)[0], (*this)[2]);
     }
 
-    inline vec_t<Type, 3>
-    yzx() const
+    vec_t<Type, 3> yzx() const
     {
         return vec_t<Type, 3>((*this)[1], (*this)[2], (*this)[0]);
     }
 
-    inline vec_t<Type, 3>
-    zxy() const
+    vec_t<Type, 3> zxy() const
     {
         return vec_t<Type, 3>((*this)[2], (*this)[0], (*this)[1]);
     }
 
-    inline vec_t<Type, 3>
-    zyx() const
+    vec_t<Type, 3> zyx() const
     {
         return vec_t<Type, 3>((*this)[2], (*this)[1], (*this)[0]);
     }
 
-    inline vec_t<Type, 2>
-    xy() const
+    vec_t<Type, 2> xy() const
     {
         return vec_t<Type, 2>((*this)[0], (*this)[1]);
     }
 
-    inline vec_t<Type, 2>
-    yx() const
+    vec_t<Type, 2> yx() const
     {
         return vec_t<Type, 2>((*this)[1], (*this)[0]);
     }
 
-    inline vec_t<Type, 2>
-    zx() const
+    vec_t<Type, 2> zx() const
     {
         return vec_t<Type, 2>((*this)[2], (*this)[0]);
     }
 
-    inline vec_t<Type, 2>
-    zy() const
+    vec_t<Type, 2> zy() const
     {
         return vec_t<Type, 2>((*this)[2], (*this)[1]);
     }
 
-    inline vec_t<Type, 2>
-    xz() const
+    vec_t<Type, 2> xz() const
     {
         return vec_t<Type, 2>((*this)[0], (*this)[2]);
     }
 
-    inline vec_t<Type, 2>
-    yz() const
+    vec_t<Type, 2> yz() const
     {
         return vec_t<Type, 2>((*this)[1], (*this)[2]);
     }
 
-    inline Type &
-    x()
+    Type & x()
     {
         static_assert(Size >= 1, "Vector is too small");
         return (*this)[0];
     }
 
-    inline Type &
-    y()
+    Type & y()
     {
         static_assert(Size >= 2, "Vector is too small");
         return (*this)[1];
     }
 
-    inline Type &
-    z()
+    Type & z()
     {
         static_assert(Size >= 3, "Vector is too small");
         return (*this)[2];
     }
 
-    inline Type &
-    w()
+    Type & w()
     {
         static_assert(Size >= 4, "Vector is too small");
         return (*this)[3];
     }
 
-    inline Type
-    x() const
+    Type x() const
     {
         static_assert(Size >= 1, "Vector is too small");
         return (*this)[0];
     }
 
-    inline Type
-    y() const
+    Type y() const
     {
         static_assert(Size >= 2, "Vector is too small");
         return (*this)[1];
     }
 
-    inline Type
-    z() const
+    Type z() const
     {
         static_assert(Size >= 3, "Vector is too small");
         return (*this)[2];
     }
 
-    inline Type
-    w() const
+    Type w() const
     {
         static_assert(Size >= 4, "Vector is too small");
         return (*this)[3];
     }
 
-    inline operator
-    Type *()
-    {
-        return data;
-    }
-
-    inline operator
-    const Type *() const
-    {
-        return data;
-    }
-
-private:
     Type data[Size];
 };
 
 template <typename Type, int Size>
-inline vec_t<Type, Size>
-operator*(Type value, const vec_t<Type, Size> &vec)
+vec_t<Type, Size> operator*(Type value, const vec_t<Type, Size> &vec)
 {
     return vec * value;
 }
 
 template <typename Type, int Size>
-inline float
-length(const vec_t<Type, Size> &vec)
+float length(const vec_t<Type, Size> &vec)
 {
     float sum = 0.f;
     for (uint8_t i = 0; i < Size; ++i)
@@ -332,8 +282,7 @@ length(const vec_t<Type, Size> &vec)
 }
 
 template <typename Type, int Size>
-inline float
-length2(const vec_t<Type, Size> &vec)
+float length2(const vec_t<Type, Size> &vec)
 {
     float sum = 0.f;
     for (uint8_t i = 0; i < Size; ++i)
@@ -344,22 +293,19 @@ length2(const vec_t<Type, Size> &vec)
 }
 
 template <typename Type, int Size>
-inline float
-distance(const vec_t<Type, Size> &v1, const vec_t<Type, Size> &v2)
+float distance(const vec_t<Type, Size> &v1, const vec_t<Type, Size> &v2)
 {
     return length(v2 - v1);
 }
 
 template <typename Type, int Size>
-inline Type
-dot(const vec_t<Type, Size> &v1, const vec_t<Type, Size> &v2)
+Type dot(const vec_t<Type, Size> &v1, const vec_t<Type, Size> &v2)
 {
     return v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2];
 }
 
 template <typename Type, int Size>
-inline vec_t<Type, Size>
-cross(const vec_t<Type, Size> &v1, const vec_t<Type, Size> &v2)
+vec_t<Type, Size> cross(const vec_t<Type, Size> &v1, const vec_t<Type, Size> &v2)
 {
     // TODO this is for 2 or 3 vectors not 4
     return vec_t<Type, Size>(v1[1] * v2[2] - v2[1] * v1[2],
@@ -368,8 +314,7 @@ cross(const vec_t<Type, Size> &v1, const vec_t<Type, Size> &v2)
 }
 
 template <typename Type, int Size>
-inline vec_t<Type, Size>
-norm(const vec_t<Type, Size> &vec)
+vec_t<Type, Size> norm(const vec_t<Type, Size> &vec)
 {
     return vec / length(vec);
 }

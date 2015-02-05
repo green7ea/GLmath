@@ -19,18 +19,8 @@
  */
 
 template <typename Type>
-class mat4_t
+struct mat4_t
 {
-public:
-
-    mat4_t()
-    {
-        for (int i = 0; i < 16; ++i)
-        {
-            data[i] = (i == 0 || i == 5 || i == 10 || i == 15) ? 1 : 0;
-        }
-    }
-
     mat4_t(const Type *n)
     {
         memcpy(data, n, 16 * sizeof(Type));
@@ -132,8 +122,7 @@ public:
         data[15] = 1;
     }
 
-    inline mat4_t<Type>
-    operator+(const mat4_t<Type> &mat) const
+    inline mat4_t<Type> operator+(const mat4_t<Type> &mat) const
     {
         Type ldata[16];
 
@@ -145,8 +134,7 @@ public:
         return mat4_t<Type>(ldata);
     }
 
-    inline mat4_t<Type>
-    operator-(const mat4_t<Type> &mat) const
+    inline mat4_t<Type> operator-(const mat4_t<Type> &mat) const
     {
         Type ldata[16];
 
@@ -158,8 +146,7 @@ public:
         return mat4_t<Type>(ldata);
     }
 
-    inline vec_t<Type, 4>
-    operator*(const vec_t<Type, 4> &vec) const
+    inline vec_t<Type, 4> operator*(const vec_t<Type, 4> &vec) const
     {
         return vec_t<Type, 4>(data[0] * vec.x() + data[4] * vec.y() +
                               data[8] * vec.z() + data[12] * vec.w(),
@@ -171,16 +158,14 @@ public:
                               data[11] * vec.z() + data[15] * vec.w());
     }
 
-    inline vec_t<Type, 3>
-    operator*(const vec_t<Type, 3> &vec) const
+    inline vec_t<Type, 3> operator*(const vec_t<Type, 3> &vec) const
     {
         return vec_t<Type, 3>(data[0] * vec.x() + data[4] * vec.y() + data[8] * vec.z() + data[12],
                               data[1] * vec.x() + data[5] * vec.y() + data[9] * vec.z() + data[13],
                               data[2] * vec.x() + data[6] * vec.y() + data[10] * vec.z() + data[14]);
     }
 
-    inline mat4_t<Type>
-    operator*(const mat4_t<Type> &n) const
+    inline mat4_t<Type> operator*(const mat4_t<Type> &n) const
     {
         mat4_t<Type> res;
         Type *row, *column;
@@ -199,15 +184,13 @@ public:
         return res;
     }
 
-    inline mat4_t<Type> &
-    operator=(const mat4_t<Type> &n)
+    inline mat4_t<Type> & operator=(const mat4_t<Type> &n)
     {
         memcpy(data, n.data, 16 * sizeof(Type));
         return *this;
     }
 
-    inline bool
-    operator==(const mat4_t<Type> &mat) const
+    inline bool operator==(const mat4_t<Type> &mat) const
     {
         for (unsigned int i = 0; i < 16; ++i) {
             if (this->data[i] != mat.data[i])
@@ -217,8 +200,7 @@ public:
         return true;
     }
 
-    inline Type &
-    operator[](unsigned int index)
+    inline Type & operator[](unsigned int index)
     {
         return data[index];
     }
@@ -229,8 +211,7 @@ public:
         return vec3(data[12], data[13], data[14]);
     }
 
-    inline quat_t<Type>
-    getQuat() const
+    inline quat_t<Type> getQuat() const
     {
         const Type w = sqrt(1.f + data[0] +
                              data[5] + data[10]) / 2.f;
@@ -244,8 +225,7 @@ public:
         return lquat;
     }
 
-    inline std::string
-    format() const
+    inline std::string format() const
     {
         char output[128];
         snprintf(output, 512, "\n"
@@ -261,14 +241,12 @@ public:
         return std::string(output);
     }
 
-    static inline mat4_t<Type>
-    identity()
+    static inline mat4_t<Type> identity()
     {
         return mat4_t<Type>();
     }
 
-    static inline mat4_t<Type>
-    rotation(Type angle, Type x, Type y, Type z)
+    static inline mat4_t<Type> rotation(Type angle, Type x, Type y, Type z)
     {
         const Type s = sin(angle);
         const Type c = cos(angle);
@@ -283,8 +261,7 @@ public:
               0, 0, 0, 1});
     }
 
-    static inline mat4_t<Type>
-    translation(const vec_t<Type, 3> &trans)
+    static inline mat4_t<Type> translation(const vec_t<Type, 3> &trans)
     {
         const Type x = trans.x();
         const Type y = trans.y();
@@ -296,8 +273,7 @@ public:
               x, y, z, 1.f });
     }
 
-    static inline mat4_t<Type>
-    scale(Type x, Type y, Type z)
+    static inline mat4_t<Type> scale(Type x, Type y, Type z)
     {
         return mat4_t<Type>(
             { x, 0.f, 0.f, 0.f,
@@ -306,8 +282,7 @@ public:
               0.f, 0.f, 0.f, 1.f });
     }
 
-    static inline mat4_t<Type>
-    perspective(Type, Type,
+    static inline mat4_t<Type> perspective(Type, Type,
                 Type, Type,
                 Type, Type)
     {
@@ -316,8 +291,7 @@ public:
         return mat4_t<Type>();
     }
 
-    static inline mat4_t<Type>
-    ortho(Type, Type,
+    static inline mat4_t<Type> ortho(Type, Type,
           Type, Type,
           Type, Type)
     {
