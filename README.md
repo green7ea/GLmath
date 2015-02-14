@@ -21,7 +21,4 @@ Building
 
 `make install`
 
-
-The library is currently in alpha state and should be used at your own
-risk. Most features have had a little testing and should produce
-correct results.
+It is also possible to simply copy the hpp files to your project.
