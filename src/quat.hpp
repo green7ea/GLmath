@@ -158,3 +158,6 @@ Quat_t<T> slerp(const Quat_t<T> &, const Quat_t<T> &, float)
     // TODO complete
     return {};
 }
+
+typedef Quat_t<float> Quat;
+typedef Quat_t<double> Quatd;

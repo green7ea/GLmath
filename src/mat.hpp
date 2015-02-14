@@ -233,3 +233,9 @@ Mat_t<T, size> transpose(const Mat_t<T, size> &matrix)
 
     return res;
 }
+
+typedef Mat_t<float, 3> Mat3;
+typedef Mat_t<float, 4> Mat4;
+
+typedef Mat_t<double, 3> Mat3d;
+typedef Mat_t<double, 4> Mat4d;
