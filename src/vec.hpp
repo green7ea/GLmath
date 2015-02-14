@@ -1,39 +1,49 @@
 #pragma once
 
-template <typename Type, int Size>
+template <typename T, int Size>
 union Vec_t
 {
-    Type v[Size];
+    T v[Size];
 };
 
-template <typename Type>
-union Vec_t<Type, 2>
+template <typename T>
+union Vec_t<T, 2>
 {
-    struct { Type x, y; };
+    struct { T x, y; };
+    struct { T u, v; };
+    struct { T s, t; };
 
-    Type v[2];
+    T v[2];
 };
 
-template <typename Type>
-union Vec_t<Type, 3>
+template <typename T>
+union Vec_t<T, 3>
 {
-    struct { Type x, y, z; };
-    struct { Vec_t<Type, 2> xy; };
-    struct { Type x_; Vec_t<Type, 2> yz; };
+    struct { T x, y, z; };
+    struct { T r, g, b; };
+    struct { Vec_t<T, 2> xy; };
+    struct { Vec_t<T, 2> rg; };
+    struct { T x_; Vec_t<T, 2> yz; };
+    struct { T x_; Vec_t<T, 2> gb; };
 
-    Type v[3];
+    T v[3];
 };
 
-template <typename Type>
-union Vec_t<Type, 4>
+template <typename T>
+union Vec_t<T, 4>
 {
-    struct { Type x, y, z, w; };
-    struct { Vec_t<Type, 2> xy; };
-    struct { Type x_; Vec_t<Type, 2> yz; };
-    struct { Type x__; Type y_; Vec_t<Type, 2> zw; };
-    Vec_t<Type, 3> xyz;
+    struct { T x, y, z, w; };
+    struct { T r, g, b, a; };
+    struct { Vec_t<T, 2> xy; };
+    struct { Vec_t<T, 2> rg; };
+    struct { T x_; Vec_t<T, 2> yz; };
+    struct { T x_; Vec_t<T, 2> gb; };
+    struct { T x__; T y_; Vec_t<T, 2> zw; };
+    struct { T x__; T y_; Vec_t<T, 2> ba; };
+    Vec_t<T, 3> xyz;
+    Vec_t<T, 3> rgb;
 
-    Type v[4];
+    T v[4];
 };
 
 template <typename T, int size>
@@ -86,6 +96,8 @@ Vec_t<T, size> operator*(T value, const Vec_t<T, size> &vec)
     {
         res.v[i] = value * vec.v[i];
     }
+
+    return res;
 }
 
 template <typename T, int size>
@@ -111,7 +123,7 @@ bool operator==(const Vec_t<T, size> &a, const Vec_t<T, size> &b)
             return false;
         }
     }
-    
+
     return true;
 }
 
@@ -130,8 +142,8 @@ Vec_t<T, size> & operator/=(Vec_t<T, size> &a, T value)
 }
 
 template <typename T, int size>
-Vec_t<T, size> cross(const Vec_t<T, size> &a,
-                     const Vec_t<T, size> &b)
+Vec_t<T, size> cross(const Vec_t<T, size> &,
+                     const Vec_t<T, size> &)
 {
     Vec_t<T, size> res;
 
@@ -180,3 +192,15 @@ Vec_t<T, size> normalize(const Vec_t<T, size> &vec)
     res /= length(res);
     return res;
 }
+
+typedef Vec_t<float, 2> Vec2;
+typedef Vec_t<float, 3> Vec3;
+typedef Vec_t<float, 4> Vec4;
+
+typedef Vec_t<double, 2> Vec2d;
+typedef Vec_t<double, 3> Vec3d;
+typedef Vec_t<double, 4> Vec4d;
+
+typedef Vec_t<int, 2> Vec2i;
+typedef Vec_t<int, 3> Vec3i;
+typedef Vec_t<int, 4> Vec4i;
