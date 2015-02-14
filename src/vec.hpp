@@ -3,7 +3,7 @@
 template <typename T, int Size>
 union Vec_t
 {
-    T v[Size];
+    T data[Size];
 };
 
 template <typename T>
@@ -13,7 +13,7 @@ union Vec_t<T, 2>
     struct { T u, v; };
     struct { T s, t; };
 
-    T v[2];
+    T data[2];
 };
 
 template <typename T>
@@ -24,9 +24,9 @@ union Vec_t<T, 3>
     struct { Vec_t<T, 2> xy; };
     struct { Vec_t<T, 2> rg; };
     struct { T x_; Vec_t<T, 2> yz; };
-    struct { T x_; Vec_t<T, 2> gb; };
+    struct { T r_; Vec_t<T, 2> gb; };
 
-    T v[3];
+    T data[3];
 };
 
 template <typename T>
@@ -37,13 +37,13 @@ union Vec_t<T, 4>
     struct { Vec_t<T, 2> xy; };
     struct { Vec_t<T, 2> rg; };
     struct { T x_; Vec_t<T, 2> yz; };
-    struct { T x_; Vec_t<T, 2> gb; };
+    struct { T r_; Vec_t<T, 2> gb; };
     struct { T x__; T y_; Vec_t<T, 2> zw; };
-    struct { T x__; T y_; Vec_t<T, 2> ba; };
+    struct { T r__; T g_; Vec_t<T, 2> ba; };
     Vec_t<T, 3> xyz;
     Vec_t<T, 3> rgb;
 
-    T v[4];
+    T data[4];
 };
 
 template <typename T, int size>
@@ -54,7 +54,7 @@ Vec_t<T, size> operator+(const Vec_t<T, size> &a,
 
     for (int i = 0; i < size; ++i)
     {
-        res.v[i] = a.v[i] + b.v[i];
+        res.data[i] = a.data[i] + b.data[i];
     }
 
     return res;
@@ -68,7 +68,7 @@ Vec_t<T, size> operator-(const Vec_t<T, size> &a,
 
     for (int i = 0; i < size; ++i)
     {
-        res.v[i] = a.v[i] - b.v[i];
+        res.data[i] = a.data[i] - b.data[i];
     }
 
     return res;
@@ -81,7 +81,7 @@ Vec_t<T, size> operator-(const Vec_t<T, size> &a)
 
     for (int i = 0; i < size; ++i)
     {
-        res.v[i] = -a.v[i];
+        res.data[i] = -a.data[i];
     }
 
     return res;
@@ -94,7 +94,7 @@ Vec_t<T, size> operator*(T value, const Vec_t<T, size> &vec)
 
     for (int i = 0; i < size; ++i)
     {
-        res.v[i] = value * vec.v[i];
+        res.data[i] = value * vec.data[i];
     }
 
     return res;
@@ -118,7 +118,7 @@ bool operator==(const Vec_t<T, size> &a, const Vec_t<T, size> &b)
 {
     for (int i = 0; i < size; ++i)
     {
-        if (a.v[i] != b.v[i])
+        if (a.data[i] != b.data[i])
         {
             return false;
         }
@@ -160,7 +160,7 @@ T dot(const Vec_t<T, size> &a,
 
     for (int i = 0; i < size; ++i)
     {
-        res += a.v[i] * b.v[i];
+        res += a.data[i] * b.data[i];
     }
 
     return res;
@@ -173,7 +173,7 @@ T length2(const Vec_t<T, size> &vec)
 
     for (int i = 0; i < size; ++i)
     {
-        res += vec.v[i] * vec.v[i];
+        res += vec.data[i] * vec.data[i];
     }
 
     return res;

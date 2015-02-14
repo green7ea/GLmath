@@ -1,6 +1,6 @@
 #pragma once
 
-#include "vec.h"
+#include "vec.hpp"
 
 template <typename T>
 struct Quat_t

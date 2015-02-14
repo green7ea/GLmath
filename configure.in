@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([VectorMath], [2012.09.09], [emmanuel.boudreault@gmail.com])
+AC_INIT([GLmath], [2015.14.02], [emmanuel.boudreault@gmail.com])
 AC_CONFIG_SRCDIR([src])
 
 # Checks for programs.
@@ -10,6 +10,6 @@ AC_PROG_CXX
 AC_PROG_CC
 AC_PROG_MAKE_SET
 
-AC_CONFIG_FILES([Makefile] [src/Makefile] [test/Makefile] [VectorMath.pc])
+AC_CONFIG_FILES([Makefile] [src/Makefile] [GLmath.pc])
 
 AC_OUTPUT

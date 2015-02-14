@@ -1,6 +1,6 @@
 #pragma once
 
-#include "vec.h"
+#include "vec.hpp"
 
 /*
   These matrices are all column major. The best way to think about
