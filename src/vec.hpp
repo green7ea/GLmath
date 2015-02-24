@@ -9,6 +9,7 @@ union Vec_t
 template <typename T>
 union Vec_t<T, 2>
 {
+    Vec_t(T x, T y) : x(x), y(y) {}
     struct { T x, y; };
     struct { T u, v; };
     struct { T s, t; };
@@ -19,6 +20,7 @@ union Vec_t<T, 2>
 template <typename T>
 union Vec_t<T, 3>
 {
+    Vec_t(T x, T y, T z) : x(x), y(y), z(z) {}
     struct { T x, y, z; };
     struct { T r, g, b; };
     struct { Vec_t<T, 2> xy; };
@@ -32,6 +34,7 @@ union Vec_t<T, 3>
 template <typename T>
 union Vec_t<T, 4>
 {
+    Vec_t(T x, T y, T z, T w) : x(x), y(y), z(z), w(w) {}
     struct { T x, y, z, w; };
     struct { T r, g, b, a; };
     struct { Vec_t<T, 2> xy; };
@@ -128,16 +131,45 @@ bool operator==(const Vec_t<T, size> &a, const Vec_t<T, size> &b)
 }
 
 template <typename T, int size>
+Vec_t<T, size> & operator+=(Vec_t<T, size> &a, const Vec_t<T, size> &b)
+{
+    for (int i = 0; i < size; ++i)
+    {
+        a.data[i] += b.data[i];
+    }
+
+    return a;
+}
+
+template <typename T, int size>
+Vec_t<T, size> & operator-=(Vec_t<T, size> &a, const Vec_t<T, size> &b)
+{
+    for (int i = 0; i < size; ++i)
+    {
+        a.data[i] -= b.data[i];
+    }
+
+    return a;
+}
+
+template <typename T, int size>
 Vec_t<T, size> & operator*=(Vec_t<T, size> &a, T value)
 {
-    a = a * value;
+    for (int i = 0; i < size; ++i)
+    {
+        a.data[i] *= value;
+    }
     return a;
 }
 
 template <typename T, int size>
 Vec_t<T, size> & operator/=(Vec_t<T, size> &a, T value)
 {
-    a = a / value;
+    const T recip = (T)1 / value;
+    for (int i = 0; i < size; ++i)
+    {
+        a.data[i] *= recip;
+    }
     return a;
 }
 
