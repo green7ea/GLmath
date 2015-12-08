@@ -2,6 +2,9 @@
 
 #include "vec.hpp"
 
+namespace glm
+{
+
 template <typename T>
 struct Quat_t
 {
@@ -58,9 +61,9 @@ Quat_t<T> norm(const Quat_t<T> &quat)
     if (len > 0.f)
     {
         return Quat_t<T>(len * quat.w,
-                            len * quat.x,
-                            len * quat.y,
-                            len * quat.z);
+                         len * quat.x,
+                         len * quat.y,
+                         len * quat.z);
     }
     return Quat_t<T>(1.f, 0.f, 0.f, 0.f);
 }
@@ -161,3 +164,7 @@ Quat_t<T> slerp(const Quat_t<T> &, const Quat_t<T> &, float)
 
 typedef Quat_t<float> Quat;
 typedef Quat_t<double> Quatd;
+
+}
+
+Acked-by: Emmanuel Boudreault <emmanuel.boudreault@gmail.com>

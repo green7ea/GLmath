@@ -12,45 +12,81 @@
   \ 3  7 11 15 /     \ m30 m31 m32 m33 /
  */
 
+namespace glm
+{
+
 template <typename T, int size>
-union Mat_t
+struct Mat_t
 {
-    T data[size];
+    Mat_t()
+    {
+        for (int i = 0; i < (size * size); ++i)
+        {
+            data[i] = (i % (size + 1)) == 0 ? 1.f : 0.f;
+        }
+    }
+
+    union
+    {
+        T data[size * size];
+    };
 };
 
 template <typename T>
-union Mat_t<T, 3>
+struct Mat_t<T, 3>
 {
-    struct
+    Mat_t()
     {
-        T m00, m10, m20;
-        T m01, m11, m21;
-        T m02, m12, m22;
-    };
+        for (int i = 0; i < 9; ++i)
+        {
+            data[i] = (i % 4) == 0 ? 1.f : 0.f;
+        }
+    }
 
-    T data[9];
+    union
+    {
+        struct
+        {
+            T m00, m10, m20;
+            T m01, m11, m21;
+            T m02, m12, m22;
+        };
+
+        T data[9];
+    };
 };
 
 template <typename T>
-union Mat_t<T, 4>
+struct Mat_t<T, 4>
 {
-    struct
+    Mat_t()
     {
-        T m00, m10, m20, m30;
-        T m01, m11, m21, m31;
-        T m02, m12, m22, m32;
-        T m03, m13, m23, m33;
-    };
+        for (int i = 0; i < 16; ++i)
+        {
+            data[i] = (i % 5) == 0 ? 1.f : 0.f;
+        }
+    }
 
-    struct
+    union
     {
-        Vec_t<T, 3> base_a, m30_;
-        Vec_t<T, 3> base_b, m31_;
-        Vec_t<T, 3> base_c, m32_;
-        Vec_t<T, 3> translation;
-    };
+        struct
+        {
+            T m00, m10, m20, m30;
+            T m01, m11, m21, m31;
+            T m02, m12, m22, m32;
+            T m03, m13, m23, m33;
+        };
 
-    T data[16];
+        struct
+        {
+            Vec_t<T, 3> base_a, m30_;
+            Vec_t<T, 3> base_b, m31_;
+            Vec_t<T, 3> base_c, m32_;
+            Vec_t<T, 3> translation;
+        };
+
+        T data[16];
+    };
 };
 
 template <typename T>
@@ -83,14 +119,14 @@ Mat_t<T, 3> matrix_from_axis_angle(const Vec_t<T, 3> &axis, T angle)
 template <typename T>
 Vec_t<T, 4> operator*(const Mat_t<T, 4> &mat, const Vec_t<T, 4> &vec)
 {
-    return Vec_t<T, 4>(mat.data[0] * vec.x() + mat.data[4] * vec.y() +
-                       mat.data[8] * vec.z() + mat.data[12] * vec.w(),
-                       mat.data[1] * vec.x() + mat.data[5] * vec.y() +
-                       mat.data[9] * vec.z() + mat.data[13] * vec.w(),
-                       mat.data[2] * vec.x() + mat.data[6] * vec.y() +
-                       mat.data[10] * vec.z() + mat.data[14] * vec.w(),
-                       mat.data[3] * vec.x() + mat.data[7] * vec.y() +
-                       mat.data[11] * vec.z() + mat.data[15] * vec.w());
+    return Vec_t<T, 4>(mat.data[0] * vec.x + mat.data[4] * vec.y +
+                       mat.data[8] * vec.z + mat.data[12] * vec.w,
+                       mat.data[1] * vec.x + mat.data[5] * vec.y +
+                       mat.data[9] * vec.z + mat.data[13] * vec.w,
+                       mat.data[2] * vec.x + mat.data[6] * vec.y +
+                       mat.data[10] * vec.z + mat.data[14] * vec.w,
+                       mat.data[3] * vec.x + mat.data[7] * vec.y +
+                       mat.data[11] * vec.z + mat.data[15] * vec.w);
 }
 
 template <typename T, int size>
@@ -98,7 +134,7 @@ Mat_t<T, size> operator*(const Mat_t<T, size> &a, const Mat_t<T, size> &b)
 {
     Mat_t<T, size> result;
     T *res = result.data;
-    T *row, *column;
+    const T *row, *column;
 
     const int size2 = size * size;
     for (int i = 0; i < size2; ++i)
@@ -234,8 +270,89 @@ Mat_t<T, size> transpose(const Mat_t<T, size> &matrix)
     return res;
 }
 
+template <typename T>
+Mat_t<T, 4> projection(T left, T right, T bottom, T top, T near, T far)
+{
+    Mat_t<T, 4> mat;
+
+    mat.m00 = (2 * near) / (right - left);
+    mat.m10 = 0;
+    mat.m20 = 0;
+    mat.m30 = 0;
+
+    mat.m01 = 0;
+    mat.m11 = (2 * near) / (top - bottom);
+    mat.m21 = 0;
+    mat.m31 = 0;
+
+    mat.m02 = (right + left) / (right - left);
+    mat.m12 = (top + bottom) / (top - bottom);
+    mat.m22 = (far + near) / (far - near);
+    mat.m32 = 1;
+
+    mat.m03 = 0;
+    mat.m13 = 0;
+    mat.m23 = (-2 * far * near) / (far - near);
+    mat.m33 = 0;
+
+    return mat;
+}
+
+template <typename Type>
+Mat_t<Type, 4> lookat(const Vec_t<Type, 3> &position,
+                      const Vec_t<Type, 3> &point,
+                      const Vec_t<Type, 3> &up)
+{
+    Mat_t<Type, 4> mat;
+
+    const auto forward = normalize(point - position);
+
+    const auto left = normalize(cross(up, forward));
+    mat.m00 = left.x;
+    mat.m01 = left.y;
+    mat.m02 = left.z;
+
+    const auto normed_up = normalize(cross(forward, left));
+    mat.m10 = normed_up.x;
+    mat.m11 = normed_up.y;
+    mat.m12 = normed_up.z;
+
+    mat.m20 = forward.x;
+    mat.m21 = forward.y;
+    mat.m22 = forward.z;
+
+    mat.m03 = position.x;
+    mat.m13 = position.y;
+    mat.m23 = position.z;
+
+    mat.m30 = 0.f;
+    mat.m31 = 0.f;
+    mat.m32 = 0.f;
+    mat.m33 = 1.f;
+
+    return mat;
+}
+
+template <typename T, int size>
+void print(const Mat_t<T, size> &mat)
+{
+    printf("\n");
+
+    for (int row = 0; row < size; ++row)
+    {
+        printf("|  ");
+        for (int col = 0; col < size; ++col)
+        {
+            printf("%.2f  ", (float) mat.data[col * size + row]);
+        }
+        printf("|\n");
+    }
+}
+
 typedef Mat_t<float, 3> Mat3;
 typedef Mat_t<float, 4> Mat4;
 
 typedef Mat_t<double, 3> Mat3d;
 typedef Mat_t<double, 4> Mat4d;
+
+}
