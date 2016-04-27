@@ -1,5 +1,9 @@
 #pragma once
 
+#include <cstdio>
+#include <cassert>
+#include <initializer_list>
+
 #include "vec.hpp"
 
 /*
@@ -26,6 +30,32 @@ struct Mat_t
         }
     }
 
+    Mat_t(const std::initializer_list<T> &list)
+    {
+        const int list_size = list.size();
+        assert(list_size == size * size);
+
+        int i = 0;
+        for (const auto &item : list)
+        {
+            const int row = i / size;
+            const int col = i % size;
+            const int tranposed_i = row + col * size;
+            data[tranposed_i] = item;
+            ++i;
+        }
+    }
+
+    Mat_t & operator=(const Mat_t<T, size> &b)
+    {
+        for (int i = 0; i < size * size; ++i)
+        {
+            data[i] = b.data[i];
+        }
+
+        return *this;
+    }
+
     union
     {
         T data[size * size];
@@ -41,6 +71,29 @@ struct Mat_t<T, 3>
         {
             data[i] = (i % 4) == 0 ? 1.f : 0.f;
         }
+    }
+
+    Mat_t(const std::initializer_list<T> &list)
+    {
+        const int list_size = list.size();
+        assert(list_size == 9);
+
+        int i = 0;
+        for (const auto &item : list)
+        {
+            data[i] = item;
+            ++i;
+        }
+    }
+
+    Mat_t & operator=(const Mat_t<T, 3> &b)
+    {
+        for (int i = 0; i < 9; ++i)
+        {
+            data[i] = b.data[i];
+        }
+
+        return *this;
     }
 
     union
@@ -67,6 +120,32 @@ struct Mat_t<T, 4>
         }
     }
 
+    Mat_t(const std::initializer_list<T> &list)
+    {
+        const int list_size = list.size();
+        assert(list_size == 16);
+
+        int i = 0;
+        for (const auto &item : list)
+        {
+            const int row = i / 4;
+            const int col = i % 4;
+            const int tranposed_i = row + (col * 4);
+            data[tranposed_i] = item;
+            ++i;
+        }
+    }
+
+    Mat_t & operator=(const Mat_t<T, 4> &b)
+    {
+        for (int i = 0; i < 16; ++i)
+        {
+            data[i] = b.data[i];
+        }
+
+        return *this;
+    }
+
     union
     {
         struct
@@ -79,10 +158,14 @@ struct Mat_t<T, 4>
 
         struct
         {
-            Vec_t<T, 3> base_a, m30_;
-            Vec_t<T, 3> base_b, m31_;
-            Vec_t<T, 3> base_c, m32_;
+            Vec_t<T, 3> base_a;
+            T m03_;
+            Vec_t<T, 3> base_b;
+            T m13_;
+            Vec_t<T, 3> base_c;
+            T m23_;
             Vec_t<T, 3> translation;
+            T m33_;
         };
 
         T data[16];

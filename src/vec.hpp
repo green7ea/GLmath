@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdio>
+
 namespace glm
 {
 
